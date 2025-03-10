@@ -1,8 +1,16 @@
-# React + Vite
+### Naming convention for this Projects
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. Folder & Non- Component file Name: `kebab-case` --/user-card
+2. Component file and Component Name: `PascalCase` --LogInForm
 
-Currently, two official plugins are available:
+3. Function and normal variables : `camelCase` -- fetchUser(), userNames,
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+4. Constant Variable: `UPPER_CASE_SNAKE_CASE`
+
+### Various types of naming conventtions:
+
+- **Pascal Case** : `PascalCase -- Ex: LogingForm, AuthContext`
+- **Camel Case** : `camelCase -- Ex: firstName, lastName`
+- **Snake Case** : `snake_case -- Ex: first_name, last_name`
+- **Screaming Snake Case**: `SCREAMING_SNAKE_CASE -- Ex: FIRST_NAME, LAST_NAME`
+- **Kebab Case** : `kebab-case -- Ex: first-name, last-name`
