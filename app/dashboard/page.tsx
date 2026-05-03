@@ -17,7 +17,7 @@ export default function ImageDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
         {books.map((book) => (
           <div key={book.id} className="group flex flex-col space-y-4">
-            <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 border border-gray-100">
+            <div className="relative aspect-3/4 overflow-hidden bg-gray-50 border border-gray-100">
               <Image
                 src={book.img_url}
                 alt={book.title}
