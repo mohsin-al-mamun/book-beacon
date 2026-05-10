@@ -24,50 +24,49 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ```
 book-beacon/
-├── src/
-│   ├── app/                        ← App Router lives here
-│   │   ├── layout.tsx              ← Root layout (wraps every page)
-│   │   ├── page.tsx                ← Home page (/)
-│   │   ├── globals.css             ← Global styles + CSS variables
-│   │   │
-│   │   ├── books/
-│   │   │   └── [id]/
-│   │   │       └── page.tsx        ← Book Detail page (/books/123)
-│   │   │
-│   │   └── authors/
-│   │       └── [id]/
-│   │           └── page.tsx        ← Author Detail page (/authors/456)
+├── app/                            ← App Router lives here
+│   ├── layout.tsx                  ← Root layout (wraps every page)
+│   ├── page.tsx                    ← Home page (/)
+│   ├── globals.css                 ← Global styles + CSS variables
 │   │
-│   ├── components/                 ← All reusable UI pieces
-│   │   ├── layout/
-│   │   │   ├── Navbar.tsx
-│   │   │   └── Footer.tsx
-│   │   │
-│   │   ├── home/                   ← Components used only on home
-│   │   │   ├── Hero.tsx
-│   │   │   ├── QuickCheck.tsx
-│   │   │   ├── CategoryGrid.tsx
-│   │   │   ├── FeaturedCarousel.tsx
-│   │   │   ├── RecentlyAdded.tsx
-│   │   │   ├── CurrentlyReading.tsx
-│   │   │   ├── QuoteBanner.tsx
-│   │   │   ├── WishlistGrid.tsx
-│   │   │   └── StatsStrip.tsx
-│   │   │
-│   │   └── ui/                     ← Tiny building blocks
-│   │       ├── Badge.tsx           ← read / reading / unread / genre chips
-│   │       ├── BookCard.tsx        ← The 4-col grid card
-│   │       ├── BookCover.tsx       ← Cover image with fallback gradient
-│   │       ├── Button.tsx
-│   │       └── ProgressBar.tsx
+│   ├── books/
+│   │   └── [id]/
+│   │       └── page.tsx            ← Book Detail page (/books/123)
 │   │
-│   ├── data/                       ← Static JSON (replace with API later)
-│   │   ├── books.ts
-│   │   ├── authors.ts
-│   │   └── categories.ts
+│   └── authors/
+│       └── [id]/
+│           └── page.tsx            ← Author Detail page (/authors/456)
+│
+├── components/                     ← All reusable UI pieces
+│   ├── layout/
+│   │   ├── Navbar.tsx
+│   │   └── Footer.tsx
 │   │
-│   └── lib/                        ← Utility functions
-│       └── utils.ts                ← e.g. getOpenLibraryCoverUrl(isbn)
+│   ├── home/                       ← Components used only on home
+│   │   ├── Hero.tsx
+│   │   ├── QuickCheck.tsx
+│   │   ├── CategoryGrid.tsx
+│   │   ├── FeaturedCarousel.tsx
+│   │   ├── RecentlyAdded.tsx
+│   │   ├── CurrentlyReading.tsx
+│   │   ├── QuoteBanner.tsx
+│   │   ├── WishlistGrid.tsx
+│   │   └── StatsStrip.tsx
+│   │
+│   └── ui/                         ← Tiny building blocks
+│       ├── Badge.tsx               ← read / reading / unread / genre chips
+│       ├── BookCard.tsx            ← The 4-col grid card
+│       ├── BookCover.tsx           ← Cover image with fallback gradient
+│       ├── Button.tsx
+│       └── ProgressBar.tsx
+│
+├── data/                           ← Static JSON (replace with API later)
+│   ├── books.ts
+│   ├── authors.ts
+│   └── categories.ts
+│
+├── lib/                            ← Utility functions
+│   └── utils.ts                    ← e.g. getOpenLibraryCoverUrl(isbn)
 │
 ├── public/
 │   └── (any local images you add)
