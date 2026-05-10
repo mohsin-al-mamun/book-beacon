@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MBook — Mohsin's Personal Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ============ THEME TOKENS ============ */
+  :root[data-theme="light"] {
+    --bg: #FAF7F2;
+    --surface: #F2EDE4;
+    --card: #FFFFFF;
+    --text: #1C1917;
+    --muted: #8C7B6B;
+    --border: #E2D9CE;
+    --accent: #C4873A;
+    --accent-hover: #A06B28;
+    --accent-soft: #FBF3E8;
+
+    --read-bg: #EDF4EE;       --read-text: #3D6B4F;       --read-border: #C5DEC7;
+    --reading-bg: #EEF3F9;    --reading-text: #1E5A8A;    --reading-border: #C3D4E8;
+    --unread-bg: #F2EDE4;     --unread-text: #8C7B6B;     --unread-border: #E2D9CE;
+    --featured-bg: #FBF3E8;   --featured-text: #A06B28;   --featured-border: #EDD5B0;
+
+    --footer-bg: #1C1917;
+    --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0A0E14;
+    --surface: #0F1620;
+    --card: #0F1620;
+    --text: #E8EDF2;
+    --muted: #5B7A94;
+    --border: #1E2A3A;
+    --accent: #7EB3C8;
+    --accent-hover: #A4CDDD;
+    --accent-soft: #142231;
+
+    --read-bg: #0D2318;       --read-text: #4AAF82;       --read-border: #1A4030;
+    --reading-bg: #0D1E2E;    --reading-text: #7EB3C8;    --reading-border: #1E3A50;
+    --unread-bg: #1E2A3A;     --unread-text: #5B7A94;     --unread-border: #2A3A4E;
+    --featured-bg: #1A2535;   --featured-text: #C2D4E0;   --featured-border: #3A6B8A;
+
+    --footer-bg: #080C10;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 200ms ease, color 200ms ease;
+    line-height: 1.5;
+  }
+
+  .serif { font-family: 'Playfair Display', Georgia, serif; }
+  .mono  { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  @media (max-width: 640px) { .container { padding: 0 20px; } }
+
+  .section { padding: 96px 0; }
+  .section-tight { padding: 64px 0; }
+  @media (max-width: 768px) { .section { padding: 64px 0; } .section-tight { padding: 48px 0; } }
+
+  .section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .section-head h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 40px);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .section-head .view-all {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    transition: opacity 200ms ease;
+  }
+  .section-head .view-all:hover { opacity: 0.7; }
+
+  /* ============ NAVBAR ============ */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: color-mix(in oklab, var(--bg) 80%, transparent);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--border);
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+    gap: 24px;
+  }
+  .logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    color: var(--text);
+    user-select: none;
+  }
+  .logo .m {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .logo .book {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .logo .sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 10px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 500;
+    position: relative;
+    padding: 4px 0;
+    transition: color 200ms ease;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active {
+    color: var(--text);
+  }
+  .nav-links a.active::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -8px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .search-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 38px;
+    padding: 0 12px 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-size: 13px;
+    min-width: 220px;
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+  .search-pill:hover { border-color: var(--accent); }
+  .search-pill .kbd {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 999px;
+    transition: all 200ms ease;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .btn-accent {
+    background: var(--accent);
+    color: #fff;
+  }
+  :root[data-theme="dark"] .btn-accent { color: #0A0E14; font-weight: 600; }
+  .btn-accent:hover { background: var(--accent-hover); }
+  .btn-ghost {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: var(--accent); }
+  .btn-icon {
+    width: 38px; height: 38px; padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+  }
+  .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-icon svg { width: 16px; height: 16px; }
+
+  .nav .hamburger { display: none; }
+  @media (max-width: 980px) {
+    .nav-links, .search-pill, .nav-right .add-book-text { display: none; }
+    .nav .hamburger {
+      display: inline-flex;
+      width: 38px; height: 38px;
+      align-items: center; justify-content: center;
+      border-radius: 999px; border: 1px solid var(--border); background: var(--card);
+    }
+    .nav-right .btn-accent { padding: 0; width: 38px; }
+    .nav-right .btn-accent svg { width: 16px; height: 16px; }
+    .nav-right .btn-accent .label { display: none; }
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    min-height: 640px;
+    margin-left: calc(50% - 50vw);
+    overflow: hidden;
+    color: #F5EFE5;
+    isolation: isolate;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1600");
+    background-size: cover;
+    background-position: center;
+    z-index: -2;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,14,20,0.92) 0%, rgba(10,14,20,0.5) 60%, rgba(10,14,20,0.2) 100%);
+    z-index: -1;
+  }
+  .hero-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #C4873A;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5.5vw, 64px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px;
+    max-width: 14ch;
+    text-wrap: balance;
+    color: #FBF7EF;
+  }
+  .hero p.lede {
+    font-size: clamp(15px, 1.4vw, 18px);
+    color: rgba(245, 239, 229, 0.75);
+    margin: 0 0 36px;
+    max-width: 56ch;
+    text-wrap: pretty;
+  }
+  .stat-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 36px;
+  }
+  .stat-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-size: 13px;
+    color: rgba(245, 239, 229, 0.92);
+  }
+  .stat-pill strong {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #FBF7EF;
+  }
+  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .hero-ctas .btn { height: 48px; padding: 0 24px; font-size: 14px; border-radius: 12px; }
+  .btn-hero-primary {
+    background: #C4873A;
+    color: #fff;
+  }
+  .btn-hero-primary:hover { background: #A06B28; }
+  .btn-hero-outline {
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #FBF7EF;
+    background: rgba(255,255,255,0.02);
+  }
+  .btn-hero-outline:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.8); }
+
+  .scroll-arrow {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(245, 239, 229, 0.6);
+    animation: bounce 2.4s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.6; }
+    50% { transform: translate(-50%, 8px); opacity: 1; }
+  }
+
+  /* ============ QUICK CHECK ============ */
+  .quick-check {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .quick-check-inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 28px 0;
+  }
+  .quick-check-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .quick-check-label svg { color: var(--accent); width: 20px; height: 20px; }
+  .quick-check-input {
+    height: 44px;
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0 16px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 200ms ease;
+  }
+  .quick-check-input::placeholder { color: var(--muted); }
+  .quick-check-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .quick-check .btn-accent { height: 44px; padding: 0 24px; font-size: 14px; border-radius: 12px; }
+  @media (max-width: 768px) {
+    .quick-check-inner { grid-template-columns: 1fr; gap: 12px; }
+  }
+
+  /* ============ CATEGORY CARDS ============ */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 900px) { .cat-grid { grid-template-columns: 1fr; } }
+  .cat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .cat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-card);
+  }
+  .cat-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cat-icon svg { width: 22px; height: 22px; }
+  .cat-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 24px;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .cat-count {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .progress {
+    height: 4px;
+    background: var(--surface);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+  .cat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag-pill {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ============ FEATURED CAROUSEL (coverflow) ============ */
+  .fc-stage {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    perspective: 1600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fc-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+  .fc-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 300px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(28, 25, 23, 0.08);
+    transition:
+      transform 600ms cubic-bezier(0.22, 0.8, 0.2, 1),
+      opacity 500ms ease,
+      filter 500ms ease,
+      box-shadow 500ms ease;
+    cursor: pointer;
+    will-change: transform, opacity;
+    transform-origin: center center;
+    /* default — anything outside ±2 hides */
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+  :root[data-theme="dark"] .fc-card { box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); }
+
+  .fc-card[data-pos="-2"] {
+    opacity: 0.55;
+    z-index: 1;
+    transform: translate(calc(-50% - 360px), -50%) scale(0.62) rotateY(22deg);
+    filter: blur(1px) saturate(0.9);
+    pointer-events: auto;
+  }
+  .fc-card[data-pos="-1"] {
+    opacity: 0.92;
+    z-index: 2;
+    transform: translate(calc(-50% - 210px), -50%) scale(0.8) rotateY(14deg);
+    pointer-events: auto;
+  }
+  .fc-card[data-pos="0"] {
+    opacity: 1;
+    z-index: 5;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 24px 60px rgba(28, 25, 23, 0.18);
+    pointer-events: auto;
+  }
+  :root[data-theme="dark"] .fc-card[data-pos="0"] { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6); }
+  .fc-card[data-pos="1"] {
+    opacity: 0.92;
+    z-index: 2;
+    transform: translate(calc(-50% + 210px), -50%) scale(0.8) rotateY(-14deg);
+    pointer-events: auto;
+  }
+  .fc-card[data-pos="2"] {
+    opacity: 0.55;
+    z-index: 1;
+    transform: translate(calc(-50% + 360px), -50%) scale(0.62) rotateY(-22deg);
+    filter: blur(1px) saturate(0.9);
+    pointer-events: auto;
+  }
+
+  .fc-card[data-pos="0"]:hover { transform: translate(-50%, -50%) scale(1.015); }
+
+  /* Carousel chrome */
+  .fc-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px; height: 48px;
+    border-radius: 999px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(28,25,23,0.08);
+    transition: background 200ms ease, color 200ms ease, border-color 200ms ease, transform 200ms ease;
+  }
+  :root[data-theme="dark"] .fc-nav { box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+  .fc-nav:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  :root[data-theme="dark"] .fc-nav:hover { color: #0A0E14; }
+  .fc-nav.fc-prev { left: 12px; }
+  .fc-nav.fc-next { right: 12px; }
+  .fc-nav svg { width: 18px; height: 18px; }
+
+  .fc-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .fc-dot {
+    width: 7px; height: 7px;
+    border-radius: 999px;
+    background: var(--border);
+    transition: width 250ms ease, background 250ms ease;
+    cursor: pointer;
+  }
+  .fc-dot.active {
+    width: 22px;
+    background: var(--accent);
+  }
+
+  @media (max-width: 768px) {
+    .fc-stage { height: 520px; }
+    .fc-card { width: 240px; }
+    .fc-card[data-pos="-2"], .fc-card[data-pos="2"] { opacity: 0; pointer-events: none; }
+    .fc-card[data-pos="-1"] { transform: translate(calc(-50% - 150px), -50%) scale(0.72) rotateY(14deg); }
+    .fc-card[data-pos="1"]  { transform: translate(calc(-50% + 150px), -50%) scale(0.72) rotateY(-14deg); }
+    .fc-nav.fc-prev { left: 4px; }
+    .fc-nav.fc-next { right: 4px; }
+  }
+  .cover {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: 18px;
+    color: rgba(255,255,255,0.92);
+  }
+  .cover .cover-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .cover-rule {
+    position: absolute; left: 18px; right: 18px; bottom: 56px;
+    height: 1px; background: rgba(255,255,255,0.25);
+  }
+  .cover-author {
+    position: absolute;
+    left: 18px; right: 18px; top: 18px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+  }
+  .cover-badge {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: var(--featured-bg);
+    color: var(--featured-text);
+    border: 1px solid var(--featured-border);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  .featured-meta {
+    padding: 16px 18px 18px;
+  }
+  .book-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 1.2;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .book-author {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .book-meta-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* status badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    letter-spacing: 0.01em;
+  }
+  .badge::before {
+    content: "";
+    width: 5px; height: 5px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+  .badge.read    { background: var(--read-bg);    color: var(--read-text);    border-color: var(--read-border); }
+  .badge.reading { background: var(--reading-bg); color: var(--reading-text); border-color: var(--reading-border); }
+  .badge.unread  { background: var(--unread-bg);  color: var(--unread-text);  border-color: var(--unread-border); }
+  .badge.genre {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .badge.genre::before { display: none; }
+
+  /* ============ RECENTLY ADDED GRID ============ */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 1024px) { .book-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px)  { .book-grid { grid-template-columns: 1fr; } }
+  .book-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 200ms ease, border-color 200ms ease;
+    cursor: pointer;
+  }
+  .book-card:hover { transform: scale(1.01); border-color: var(--accent); }
+
+  /* ============ CURRENTLY READING ============ */
+  .reading-strip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .reading-strip .mini-cover {
+    width: 96px;
+    aspect-ratio: 2/3;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .reading-strip h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 22px;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .reading-strip .author { color: var(--muted); font-size: 14px; margin: 0 0 14px; }
+  .reading-progress {
+    display: flex; align-items: center; gap: 12px;
+    max-width: 460px;
+  }
+  .reading-progress .progress { flex: 1; }
+  .reading-progress .pages { font-size: 12px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .reading-strip .date {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: right;
+  }
+  .reading-strip .date strong { color: var(--text); display: block; font-weight: 500; font-size: 13px; }
+  @media (max-width: 768px) {
+    .reading-strip { grid-template-columns: 80px 1fr; }
+    .reading-strip .date { grid-column: 1 / -1; text-align: left; }
+    .reading-strip .mini-cover { width: 80px; }
+  }
+
+  /* ============ QUOTE BANNER ============ */
+  .quote-banner {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .quote-banner .quote-mark {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 700;
+    font-size: 380px;
+    line-height: 1;
+    color: var(--border);
+    opacity: 0.55;
+    user-select: none;
+    pointer-events: none;
+  }
+  .quote-inner {
+    position: relative;
+    text-align: center;
+    padding: 96px 0;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  .quote-inner blockquote {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.35;
+    margin: 0 0 24px;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+  .quote-attr {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* ============ WANT TO READ NEXT ============ */
+  .wishlist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .wishlist-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    transition: border-color 200ms ease, transform 200ms ease;
+    cursor: pointer;
+  }
+  .wishlist-row:hover { border-color: var(--accent); transform: translateX(2px); }
+  .wishlist-row .mini-cover {
+    width: 56px; aspect-ratio: 2/3;
+    border-radius: 6px; overflow: hidden;
+  }
+  .wishlist-row h4 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 17px;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .wishlist-row .meta {
+    display: flex; gap: 12px; align-items: center;
+    font-size: 13px; color: var(--muted);
+  }
+  .wishlist-row .meta .dot { width: 3px; height: 3px; border-radius: 999px; background: var(--muted); opacity: 0.6; }
+  .bookmark-btn {
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    background: var(--accent-soft);
+    transition: background 200ms ease;
+  }
+  .bookmark-btn:hover { background: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .bookmark-btn:hover { color: #0A0E14; }
+
+  /* ============ STATS STRIP ============ */
+  .stats-strip {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 56px 0;
+  }
+  @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px 0; } }
+  .stat-box {
+    text-align: center;
+    padding: 0 16px;
+    position: relative;
+  }
+  .stat-box + .stat-box::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 12px; bottom: 12px;
+    width: 1px; background: var(--border);
+  }
+  @media (max-width: 768px) {
+    .stat-box + .stat-box::before { display: none; }
+  }
+  .stat-num {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(36px, 4vw, 56px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .stat-num.accent { color: var(--accent); }
+  .stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    background: var(--footer-bg);
+    color: #D8CFC2;
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 48px;
+    padding: 80px 0 0;
+  }
+  @media (max-width: 768px) {
+    .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+  }
+  .footer .logo { color: #F5EFE5; }
+  .footer .logo .m { font-size: 44px; }
+  .footer .logo .book { font-size: 32px; }
+  .footer-tag {
+    color: rgba(216, 207, 194, 0.55);
+    font-size: 14px;
+    margin-top: 16px;
+    max-width: 36ch;
+    line-height: 1.6;
+  }
+  .footer-col h5 {
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 6px 0 16px;
+  }
+  .footer-col ul {
+    list-style: none;
+    padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .footer-col a {
+    color: rgba(216, 207, 194, 0.78);
+    font-size: 14px;
+    transition: color 200ms ease;
+  }
+  .footer-col a:hover { color: #F5EFE5; }
+  .footer-bottom {
+    margin-top: 64px;
+    border-top: 1px solid rgba(216,207,194,0.12);
+    padding: 24px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 12px;
+    color: rgba(216, 207, 194, 0.5);
+  }
+  @media (max-width: 768px) {
+    .footer-bottom { flex-direction: column; }
+  }
+
+  /* ============ COVER IMAGE OVERLAY (real images on top of color fallback) ============ */
+  .cover { overflow: hidden; }
+  .mini-cover { position: relative; overflow: hidden; }
+  .cover-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+  }
+  .cover .cover-badge { z-index: 3; }
+  .bookmark-corner { z-index: 3; }
+
+  /* ============ CURRENTLY READING — redesigned as a centered card ============ */
+  .reading-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 28px;
+    align-items: center;
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-card);
+    transition: background-color 200ms ease, border-color 200ms ease;
+  }
+  .reading-cover {
+    width: 140px;
+    aspect-ratio: 2/3;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  }
+  .reading-body h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    font-size: 22px;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .reading-author { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+  .progress-meta {
+    display: flex; justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-meta .pct { color: var(--accent); font-weight: 600; }
+  .reading-foot {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px;
+  }
+  @media (max-width: 560px) {
+    .reading-card { grid-template-columns: 1fr; text-align: center; padding: 24px; }
+    .reading-cover { margin: 0 auto; }
+    .reading-foot { justify-content: center; flex-wrap: wrap; }
+  }
+
+  /* ============ WANT TO READ — grid of cards ============ */
+  .wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 900px) { .wishlist-grid { grid-template-columns: 1fr; } }
+  .wishlist-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 200ms ease, border-color 200ms ease;
+  }
+  .wishlist-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .bookmark-corner {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.92);
+    color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: background 200ms ease, color 200ms ease;
+  }
+  .bookmark-corner:hover { background: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .bookmark-corner { background: rgba(15, 22, 32, 0.86); }
+  :root[data-theme="dark"] .bookmark-corner:hover { color: #0A0E14; }
+
+  /* ============ COVER COLORS (rich literary fallback palette) ============ */
+  .cv-crime    { background: linear-gradient(160deg, #5B1A1A 0%, #3A0F0F 100%); }
+  .cv-muqad    { background: linear-gradient(160deg, #3D5A3D 0%, #1F3320 100%); }
+  .cv-solitude { background: linear-gradient(160deg, #C97F3D 0%, #8C4F1B 100%); }
+  .cv-riyad    { background: linear-gradient(160deg, #1F4E4A 0%, #0E2E2C 100%); }
+  .cv-sapiens  { background: linear-gradient(160deg, #2B3A55 0%, #15203A 100%); }
+  .cv-karam    { background: linear-gradient(160deg, #2A1F3D 0%, #14092A 100%); }
+  .cv-anna     { background: linear-gradient(160deg, #6B2B3A 0%, #3E141E 100%); }
+  .cv-shade    { background: linear-gradient(160deg, #5B4A2A 0%, #2F2410 100%); }
+  .cv-silk     { background: linear-gradient(160deg, #8C5A2E 0%, #4F2F14 100%); }
+
+  /* ============ SVG ICONS ============ */
+  .icon { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+
+<!-- =========== NAVBAR =========== -->
+<nav class="nav" data-screen-label="Navbar">
+  <div class="container nav-inner">
+    <a href="#" class="logo" aria-label="MBook home">
+      <span class="m serif">M</span><span class="book serif">Book</span><span class="sub">/ Library</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#">Books</a>
+      <a href="#">Authors</a>
+      <a href="#">Stats</a>
+    </div>
+
+    <div class="nav-right">
+      <button class="search-pill" aria-label="Search">
+        <svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span>Search the library…</span>
+        <span class="kbd">⌘K</span>
+      </button>
+      <button class="btn btn-accent" aria-label="Add book">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="label">Add book</span>
+      </button>
+      <button class="btn-icon" id="theme-toggle" aria-label="Toggle theme">
+        <!-- sun (shown in dark mode) / moon (shown in light mode) -->
+        <svg class="icon icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      </button>
+      <button class="hamburger" aria-label="Menu">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- =========== HERO =========== -->
+<section class="hero" data-screen-label="Hero">
+  <div class="hero-bg" role="img" aria-label="Atmospheric library bookshelf"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-inner">
+    <div class="eyebrow">Personal Library</div>
+    <h1>A curated collection,<br/>thoughtfully gathered.</h1>
+    <p class="lede">Literature, Islamic texts, and history — all in one elegant place.</p>
+
+    <div class="stat-pills">
+      <span class="stat-pill"><strong>247</strong> Books</span>
+      <span class="stat-pill"><strong>89</strong> Read</span>
+      <span class="stat-pill"><strong>34</strong> Authors</span>
+    </div>
+
+    <div class="hero-ctas">
+      <a class="btn btn-hero-primary" href="#categories">Browse Collection</a>
+      <a class="btn btn-hero-outline" href="#quick-check">Do I own it?</a>
+    </div>
+  </div>
+
+  <a href="#quick-check" class="scroll-arrow" aria-label="Scroll down">
+    <svg viewBox="0 0 24 24" style="width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+  </a>
+</section>
+
+<!-- =========== QUICK CHECK =========== -->
+<section class="quick-check" id="quick-check" data-screen-label="Quick check">
+  <div class="container quick-check-inner">
+    <div class="quick-check-label">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M2 4.5A2.5 2.5 0 0 1 4.5 2H10a2 2 0 0 1 2 2v16a2 2 0 0 0-2-2H2zM22 4.5A2.5 2.5 0 0 0 19.5 2H14a2 2 0 0 0-2 2v16a2 2 0 0 1 2-2h8z"/></svg>
+      <span>Do I already own this?</span>
+    </div>
+    <input class="quick-check-input" type="text" placeholder="Search by title, author, or ISBN…" />
+    <button class="btn btn-accent">Check</button>
+  </div>
+</section>
+
+<!-- =========== CATEGORIES =========== -->
+<section class="section" id="categories" data-screen-label="Categories">
+  <div class="container">
+    <div class="section-head">
+      <h2>Browse by category</h2>
+    </div>
+    <div class="cat-grid">
+      <article class="cat-card">
+        <div class="cat-icon">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>
+        </div>
+        <div>
+          <h3 class="cat-name">Literature</h3>
+          <p class="cat-count">168 books</p>
+        </div>
+        <div class="progress" aria-label="68% of collection"><div class="progress-bar" style="width:68%"></div></div>
+        <div class="cat-tags">
+          <span class="tag-pill">Fiction</span>
+          <span class="tag-pill">Classic</span>
+          <span class="tag-pill">Poetry</span>
+          <span class="tag-pill">Drama</span>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="cat-icon">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/><path d="m17 3 1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg>
+        </div>
+        <div>
+          <h3 class="cat-name">Islamic / Religious</h3>
+          <p class="cat-count">51 books</p>
+        </div>
+        <div class="progress" aria-label="21% of collection"><div class="progress-bar" style="width:21%"></div></div>
+        <div class="cat-tags">
+          <span class="tag-pill">Tafsir</span>
+          <span class="tag-pill">Hadith</span>
+          <span class="tag-pill">Fiqh</span>
+          <span class="tag-pill">Seerah</span>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="cat-icon">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M5 22h14M5 2h14M6 2v6a6 6 0 0 0 12 0V2M6 22v-6a6 6 0 0 1 12 0v6"/></svg>
+        </div>
+        <div>
+          <h3 class="cat-name">History</h3>
+          <p class="cat-count">28 books</p>
+        </div>
+        <div class="progress" aria-label="11% of collection"><div class="progress-bar" style="width:11%"></div></div>
+        <div class="cat-tags">
+          <span class="tag-pill">World</span>
+          <span class="tag-pill">Islamic History</span>
+          <span class="tag-pill">Biography</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========== FEATURED =========== -->
+<section class="section" style="padding-top:0" data-screen-label="Featured">
+  <div class="container">
+    <div class="section-head">
+      <h2>Featured books</h2>
+      <a class="view-all" href="#">View all →</a>
+    </div>
+  </div>
+  <div class="container">
+    <div class="fc-stage">
+      <button class="fc-nav fc-prev" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+
+      <div class="fc-track" id="fcTrack">
+        <article class="fc-card" data-idx="0">
+          <div class="cover cv-crime">
+            <span class="cover-badge">Featured</span>
+            <span class="cover-author">Dostoevsky</span>
+            <span class="cover-rule"></span>
+            <div class="cover-title">Crime and Punishment</div>
+          </div>
+          <div class="featured-meta">
+            <h3 class="book-title">Crime and Punishment</h3>
+            <p class="book-author">Fyodor Dostoevsky</p>
+            <div class="book-meta-row">
+              <span class="badge genre">Classic</span>
+              <span class="badge read">Read</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fc-card" data-idx="1">
+          <div class="cover cv-muqad">
+            <span class="cover-badge">Featured</span>
+            <span class="cover-author">Ibn Khaldun</span>
+            <span class="cover-rule"></span>
+            <div class="cover-title">Al-Muqaddimah</div>
+          </div>
+          <div class="featured-meta">
+            <h3 class="book-title">Al-Muqaddimah</h3>
+            <p class="book-author">Ibn Khaldun</p>
+            <div class="book-meta-row">
+              <span class="badge genre">History</span>
+              <span class="badge read">Read</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fc-card" data-idx="2">
+          <div class="cover cv-solitude">
+            <span class="cover-badge">Featured</span>
+            <span class="cover-author">García Márquez</span>
+            <span class="cover-rule"></span>
+            <div class="cover-title">One Hundred Years of Solitude</div>
+          </div>
+          <div class="featured-meta">
+            <h3 class="book-title">One Hundred Years of Solitude</h3>
+            <p class="book-author">Gabriel García Márquez</p>
+            <div class="book-meta-row">
+              <span class="badge genre">Fiction</span>
+              <span class="badge unread">Unread</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fc-card" data-idx="3">
+          <div class="cover cv-riyad">
+            <span class="cover-badge">Featured</span>
+            <span class="cover-author">Imam an-Nawawi</span>
+            <span class="cover-rule"></span>
+            <div class="cover-title">Riyad as-Salihin</div>
+          </div>
+          <div class="featured-meta">
+            <h3 class="book-title">Riyad as-Salihin</h3>
+            <p class="book-author">Imam an-Nawawi</p>
+            <div class="book-meta-row">
+              <span class="badge genre">Hadith</span>
+              <span class="badge unread">Unread</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fc-card" data-idx="4">
+          <div class="cover cv-sapiens">
+            <span class="cover-badge">Featured</span>
+            <span class="cover-author">Yuval N. Harari</span>
+            <span class="cover-rule"></span>
+            <div class="cover-title">Sapiens</div>
+          </div>
+          <div class="featured-meta">
+            <h3 class="book-title">Sapiens</h3>
+            <p class="book-author">Yuval Noah Harari</p>
+            <div class="book-meta-row">
+              <span class="badge genre">History</span>
+              <span class="badge read">Read</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="fc-card" data-idx="5">
+          <div class="cover cv-karam">
+            <span class="cover-badge">Featured</span>
+            <span class="cover-author">Dostoevsky</span>
+            <span class="cover-rule"></span>
+            <div class="cover-title">The Brothers Karamazov</div>
+          </div>
+          <div class="featured-meta">
+            <h3 class="book-title">The Brothers Karamazov</h3>
+            <p class="book-author">Fyodor Dostoevsky</p>
+            <div class="book-meta-row">
+              <span class="badge genre">Classic</span>
+              <span class="badge reading">Reading</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <button class="fc-nav fc-next" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+
+    <div class="fc-dots" id="fcDots" aria-hidden="true"></div>
+  </div>
+</section>
+
+<!-- =========== RECENTLY ADDED =========== -->
+<section class="section" style="padding-top:0" data-screen-label="Recently added">
+  <div class="container">
+    <div class="section-head">
+      <h2>Recently added</h2>
+      <a class="view-all" href="#">View all →</a>
+    </div>
+
+    <div class="book-grid">
+      <article class="book-card">
+        <div class="cover cv-crime"><span class="cover-author">Dostoevsky</span><span class="cover-rule"></span><div class="cover-title">Crime and Punishment</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">Crime and Punishment</h3>
+          <p class="book-author">Fyodor Dostoevsky</p>
+          <div class="book-meta-row"><span class="badge genre">Classic</span><span class="badge read">Read</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-riyad"><span class="cover-author">an-Nawawi</span><span class="cover-rule"></span><div class="cover-title">Riyad as-Salihin</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">Riyad as-Salihin</h3>
+          <p class="book-author">Imam an-Nawawi</p>
+          <div class="book-meta-row"><span class="badge genre">Hadith</span><span class="badge unread">Unread</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-sapiens"><span class="cover-author">Yuval N. Harari</span><span class="cover-rule"></span><div class="cover-title">Sapiens</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">Sapiens</h3>
+          <p class="book-author">Yuval Noah Harari</p>
+          <div class="book-meta-row"><span class="badge genre">History</span><span class="badge read">Read</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-solitude"><span class="cover-author">García Márquez</span><span class="cover-rule"></span><div class="cover-title">One Hundred Years of Solitude</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">One Hundred Years of Solitude</h3>
+          <p class="book-author">Gabriel García Márquez</p>
+          <div class="book-meta-row"><span class="badge genre">Fiction</span><span class="badge unread">Unread</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-karam"><span class="cover-author">Dostoevsky</span><span class="cover-rule"></span><div class="cover-title">The Brothers Karamazov</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">The Brothers Karamazov</h3>
+          <p class="book-author">Fyodor Dostoevsky</p>
+          <div class="book-meta-row"><span class="badge genre">Classic</span><span class="badge reading">Reading</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-muqad"><span class="cover-author">Ibn Khaldun</span><span class="cover-rule"></span><div class="cover-title">Al-Muqaddimah</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">Al-Muqaddimah</h3>
+          <p class="book-author">Ibn Khaldun</p>
+          <div class="book-meta-row"><span class="badge genre">History</span><span class="badge read">Read</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-anna"><span class="cover-author">Leo Tolstoy</span><span class="cover-rule"></span><div class="cover-title">Anna Karenina</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">Anna Karenina</h3>
+          <p class="book-author">Leo Tolstoy</p>
+          <div class="book-meta-row"><span class="badge genre">Classic</span><span class="badge unread">Unread</span></div>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover cv-shade"><span class="cover-author">Sayyid Qutb</span><span class="cover-rule"></span><div class="cover-title">In the Shade of the Quran</div></div>
+        <div class="featured-meta">
+          <h3 class="book-title">In the Shade of the Quran</h3>
+          <p class="book-author">Sayyid Qutb</p>
+          <div class="book-meta-row"><span class="badge genre">Tafsir</span><span class="badge unread">Unread</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========== CURRENTLY READING =========== -->
+<section class="section-tight" style="padding-top:0" data-screen-label="Currently reading">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:24px; justify-content:center; text-align:center">
+      <h2 style="font-size:clamp(22px,2.5vw,28px)">Currently reading</h2>
+    </div>
+    <div class="reading-card">
+      <div class="reading-cover cv-karam"></div>
+      <div class="reading-body">
+        <h3>The Brothers Karamazov</h3>
+        <p class="reading-author">Fyodor Dostoevsky</p>
+        <div class="progress" style="height:6px"><div class="progress-bar" style="width:38%"></div></div>
+        <div class="progress-meta">
+          <span>pg 282 of 740</span>
+          <span class="pct">38%</span>
+        </div>
+        <div class="reading-foot">
+          <span>Started Apr 22, 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== QUOTE BANNER =========== -->
+<section class="quote-banner" data-screen-label="Quote">
+  <span class="quote-mark serif">“</span>
+  <div class="container">
+    <div class="quote-inner">
+      <blockquote>“A reader lives a thousand lives before he dies. The man who never reads lives only one.”</blockquote>
+      <div class="quote-attr">— George R. R. Martin</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== WANT TO READ NEXT =========== -->
+<section class="section" data-screen-label="Want to read next">
+  <div class="container">
+    <div class="section-head">
+      <h2>Want to read next</h2>
+      <a class="view-all" href="#">Manage list →</a>
+    </div>
+
+    <div class="wishlist-grid">
+      <article class="wishlist-card">
+        <div class="cover cv-anna">
+          <button class="bookmark-corner" aria-label="Saved to read next">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </div>
+        <div class="featured-meta">
+          <h3 class="book-title">Anna Karenina</h3>
+          <p class="book-author">Leo Tolstoy</p>
+          <div class="book-meta-row"><span class="badge genre">Classic</span></div>
+        </div>
+      </article>
+
+      <article class="wishlist-card">
+        <div class="cover cv-shade">
+          <button class="bookmark-corner" aria-label="Saved to read next">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </div>
+        <div class="featured-meta">
+          <h3 class="book-title">In the Shade of the Quran</h3>
+          <p class="book-author">Sayyid Qutb</p>
+          <div class="book-meta-row"><span class="badge genre">Tafsir</span></div>
+        </div>
+      </article>
+
+      <article class="wishlist-card">
+        <div class="cover cv-silk">
+          <button class="bookmark-corner" aria-label="Saved to read next">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
+        </div>
+        <div class="featured-meta">
+          <h3 class="book-title">The Silk Roads</h3>
+          <p class="book-author">Peter Frankopan</p>
+          <div class="book-meta-row"><span class="badge genre">History</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- =========== STATS STRIP =========== -->
+<section class="stats-strip" data-screen-label="Reading stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num serif">247</div>
+        <div class="stat-label">Books owned</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num serif">89</div>
+        <div class="stat-label">Books read</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num serif accent">36%</div>
+        <div class="stat-label">Read ratio</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num serif">34</div>
+        <div class="stat-label">Authors</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== FOOTER =========== -->
+<footer class="footer" data-screen-label="Footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <a href="#" class="logo">
+          <span class="m serif">M</span><span class="book serif">Book</span>
+        </a>
+        <p class="footer-tag">A quiet corner of the internet for Mohsin's books — literature, Islamic texts, and history, gathered with care.</p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Library</h5>
+        <ul>
+          <li><a href="#">All Books</a></li>
+          <li><a href="#">Authors</a></li>
+          <li><a href="#">Categories</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Account</h5>
+        <ul>
+          <li><a href="#">Stats</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Export data</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 MBook · Mohsin's personal library</span>
+      <span class="mono">Next.js · Prisma · PostgreSQL</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* show only the right theme icon */
+  :root[data-theme="light"] .icon-sun  { display: none; }
+  :root[data-theme="dark"]  .icon-moon { display: none; }
+</style>
+
+<script>
+  // ============ REAL BOOK COVERS (Open Library) ============
+  (function () {
+    const ISBN = {
+      crime:    '0140449132',
+      muqad:    '0691166285',
+      solitude: '0060883286',
+      riyad:    '9960892883',
+      sapiens:  '0062316097',
+      karam:    '0374528373',
+      anna:     '0143035002',
+      shade:    '0860373223',
+      silk:     '1101912379'
+    };
+    document.querySelectorAll('.cover, .mini-cover, .reading-cover').forEach(el => {
+      const m = el.className.match(/cv-([a-z]+)/);
+      if (!m) return;
+      const isbn = ISBN[m[1]];
+      if (!isbn) return;
+      const img = new Image();
+      img.className = 'cover-img';
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.onerror = () => img.remove();
+      img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
+      el.appendChild(img);
+    });
+  })();
+
+  // ============ FEATURED CAROUSEL ============
+  (function () {
+    const track = document.getElementById('fcTrack');
+    const dotsEl = document.getElementById('fcDots');
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll('.fc-card'));
+    const n = cards.length;
+    let active = Math.floor(n / 2) - 1;
+
+    // build dots
+    cards.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'fc-dot';
+      d.setAttribute('aria-label', 'Go to book ' + (i + 1));
+      d.addEventListener('click', () => go(i));
+      dotsEl.appendChild(d);
+    });
+    const dots = Array.from(dotsEl.children);
+
+    function render() {
+      cards.forEach((c, i) => {
+        let d = i - active;
+        // wrap-around shortest path
+        if (d > n / 2)  d -= n;
+        if (d < -n / 2) d += n;
+        if (d >= -2 && d <= 2) {
+          c.setAttribute('data-pos', d);
+        } else {
+          c.removeAttribute('data-pos');
+        }
+      });
+      dots.forEach((d, i) => d.classList.toggle('active', i === active));
+    }
+    function go(i) { active = ((i % n) + n) % n; render(); }
+    function next() { go(active + 1); }
+    function prev() { go(active - 1); }
+
+    document.querySelector('.fc-prev').addEventListener('click', prev);
+    document.querySelector('.fc-next').addEventListener('click', next);
+
+    // click side cards to focus
+    cards.forEach((c, i) => c.addEventListener('click', (e) => {
+      if (i !== active) { e.preventDefault(); go(i); }
+    }));
+
+    // keyboard
+    track.tabIndex = 0;
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); prev(); }
+    });
+
+    // touch swipe
+    let sx = 0, sy = 0, swiping = false;
+    track.addEventListener('touchstart', (e) => {
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; swiping = true;
+    }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      if (!swiping) return;
+      swiping = false;
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) next(); else prev();
+      }
+    }, { passive: true });
+
+    render();
+  })();
+
+  // ============ THEME TOGGLE ============
+  (function () {
+    const root = document.documentElement;
+    const stored = localStorage.getItem('mbook-theme');
+    if (stored === 'dark' || stored === 'light') {
+      root.setAttribute('data-theme', stored);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      root.setAttribute('data-theme', 'dark');
+    }
+    const btn = document.getElementById('theme-toggle');
+    btn?.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('mbook-theme', next);
+    });
+  })();
+</script>
+
+</body>
+</html>

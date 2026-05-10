@@ -1,6 +1,5 @@
-// src/app/dashboard/page.tsx
 import Image from "next/image";
-import { revalidatePath } from "next/cache"; // Import the revalidation utility
+import { revalidatePath } from "next/cache";
 
 interface Book {
   id: string;
@@ -27,24 +26,32 @@ async function getBooks(): Promise<Book[]> {
 export default async function BookDashboard() {
   const books = await getBooks();
 
-  // This is the Server Action
-  async function refreshData() {
-    "use server";
-    revalidatePath("/demo");
-  }
-
   return (
     <main className="min-h-screen bg-[#fafafa] px-6 py-16 md:px-20">
-      <div className="flex items-center justify-between mb-12">
-        <h1 className="text-3xl font-serif text-slate-900">Book Shelf</h1>
-
-        {/* Manual Revalidation Button */}
-        <form action={refreshData}>
+      <div className="flex justify-end mb-8">
+        <form
+          action={async () => {
+            "use server";
+            revalidatePath("/demo");
+          }}
+        >
           <button
             type="submit"
-            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 active:bg-slate-100"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition cursor-pointer"
           >
-            Refresh Collection
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            Refresh books
           </button>
         </form>
       </div>
@@ -52,12 +59,12 @@ export default async function BookDashboard() {
       <div className="grid grid-cols-1 gap-y-16 gap-x-12 sm:grid-cols-2 lg:grid-cols-4">
         {books.map((book) => (
           <section key={book.id} className="group">
-            <div className="relative aspect-[2/3] overflow-hidden bg-slate-200">
+            <div className="relative aspect-2/3 overflow-hidden bg-slate-200">
               <Image
                 src={book.img_url}
                 alt={book.title}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover"
               />
             </div>
             <div className="mt-6">
