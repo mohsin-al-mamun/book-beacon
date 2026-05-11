@@ -13,7 +13,7 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable}`}
     >
       <head>{/* Inject theme before React hydrates — prevents flash */}</head>
-      <body>
+      <body suppressHydrationWarning>
         <main>{children}</main>
       </body>
     </html>
